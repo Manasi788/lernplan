@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Academic Planner</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fff7f2;
+      color: #4a4a4a;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: linear-gradient(135deg, #f9d5e5, #fcefee);
+      color: #7a4f6f;
+      text-align: center;
+      padding: 1.4rem 0;
+      font-size: 2rem;
+      font-weight: 700;
+      box-shadow: 0 4px 6px rgba(122, 79, 111, 0.3);
+    }
+    nav {
+      background: #fcefe9;
+      display: flex;
+      justify-content: center;
+      gap: 1.6rem;
+      padding: 1rem 0;
+      box-shadow: 0 3px 6px rgba(249, 213, 229, 0.3);
+    }
+    nav a {
+      color: #a36985;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 14px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.1rem;
+    }
+    nav a.active,
+    nav a:hover {
+      background: linear-gradient(135deg, #b5ead7, #c7ceea);
+      color: #4a4a4a;
+    }
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    section {
+      display: none;
+    }
+    section.active {
+      display: block;
+    }
+    .quote-box, .task-input button, .timer-controls button {
+      background-color: #ffdce5;
+      border-radius: 10px;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .quote-box button, .task-input button, .timer-controls button {
+      background-color: #f48fb1;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: white;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 8px 0;
+      padding: 8px;
+      border-radius: 10px;
+      background: #fae3d9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .timer-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .task-section {
+      margin-top: 1rem;
+    }
+    .task-section h3 {
+      margin-bottom: 0.5rem;
+    }
+    .task-section ul {
+      margin-bottom: 1rem;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .calendar-day {
+      background-color: #fae3d9;
+      padding: 15px;
+      border-radius: 10px;
+      position: relative;
+    }
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-weight: bold;
+      color: #7a4f6f;
+      margin-top: 1rem;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      background-color: pink;
+      border-radius: 50%;
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      cursor: pointer;
+    }
+    .event-text {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #7a4f6f;
+    }
+  </style>
+</head>
+<body>
+  <header>LERNPLAN</header>
+  <nav>
+    <a href="#" onclick="switchSection(event, 'home')" class="active"><i class="fas fa-home"></i> Home</a>
+    <a href="#" onclick="switchSection(event, 'subjects')"><i class="fas fa-book"></i> Subjects</a>
+    <a href="#" onclick="switchSection(event, 'todo')"><i class="fas fa-tasks"></i> To-Do List</a>
+    <a href="#" onclick="switchSection(event, 'calendar')"><i class="fas fa-calendar"></i> Calendar</a>
+    <a href="#" onclick="switchSection(event, 'timer')"><i class="fas fa-hourglass-start"></i> Timer</a>
+  </nav>
+  <main>
+    <section id="home" class="active">
+      <h2><br>Heyy Manasii!!</br></h2>
+      <div class="quote-box">
+        <p id="quoteText">"The future belongs to those who believe in the beauty of their dreams." – Eleanor Roosevelt</p>
+        <button onclick="newQuote()">New Quote</button>
+      </div>
+    </section>
+
+    <section id="subjects">
+      <h2><br>Subjects List</br></h2>
+      <ul>
+        <li>Mathematics-  Grade: A+</li>
+        <li>Hardware-  Grade: B+</li>
+        <li>Economics-  Grade :A+</li>
+        <li>C programing-  Grade: A</li>
+        <li>Digital Logic-  Grade: A</li>
+        <li>Physics-     Grade: A</li>
+      </ul>
+    </section>
+
+    <section id="todo">
+      <h2><br>To-Do List</br></h2>
+      <div class="task-input">
+        <input type="text" id="taskInput" placeholder="Enter a task" />
+        <button onclick="addTask()">Add Task</button>
+      </div>
+      <div class="task-section">
+        <h3>Pending Tasks</h3>
+        <ul id="pendingTasks"></ul>
+      </div>
+      <div class="task-section">
+        <h3>Completed Tasks</h3>
+        <ul id="completedTasks"></ul>
+      </div>
+    </section>
+    <section id="calendar">
+  <h2>June 2025 Calendar</h2>
+
+  <div class="calendar-weekdays">
+    <div>Sun</div><div>Mon</div><div>Tue</div>
+    <div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+  </div>
+
+  <div class="calendar">
+    <!-- Week 1 -->
+    <div class="calendar-day">1</div>
+    <div class="calendar-day">2</div>
+    <div class="calendar-day">3</div>
+    <div class="calendar-day">4</div>
+    <div class="calendar-day">5</div>
+    <div class="calendar-day">6</div>
+    <div class="calendar-day">7</div>
+
+    <!-- Week 2 -->
+    <div class="calendar-day">8</div>
+    <div class="calendar-day">9</div>
+    <div class="calendar-day">10</div>
+    <div class="calendar-day">11</div>
+    <div class="calendar-day">12</div>
+    <div class="calendar-day">13</div>
+    <div class="calendar-day">14</div>
+    <!-- Week 3 -->
+    <div class="calendar-day" onclick="showEvent(this)">
+      15
+      <div class="dot"></div>
+      <div class="event-text" style="display:none">Assignment Due</div>
+    </div>
+    <div class="calendar-day">16</div>
+    <div class="calendar-day">17</div>
+    <div class="calendar-day">18</div>
+    <div class="calendar-day">19</div>
+    <div class="calendar-day" onclick="showEvent(this)">
+      20
+      <div class="dot"></div>
+      <div class="event-text" style="display:none">Sem Exam</div>
+    </div>
+    <div class="calendar-day">21</div>
+
+    <!-- Week 4 -->
+    <div class="calendar-day">22</div>
+    <div class="calendar-day">23</div>
+    <div class="calendar-day">24</div>
+    <div class="calendar-day">25</div>
+    <div class="calendar-day">26</div>
+    <div class="calendar-day">27</div>
+    <div class="calendar-day">28</div>
+     <!-- Week 5 -->
+    <div class="calendar-day">29</div>
+    <div class="calendar-day">30</div>
+    <div></div><div></div><div></div><div></div><div></div>
+  </div>
+</section>
+
+    <section id="timer">
+      <h2><br>Study Timer</br></h2>
+      <div id="timerDisplay" style="font-size: 2rem; text-align: center; margin-bottom: 1rem;">25:00</div>
+      <div class="timer-controls">
+        <button onclick="startTimer()">Start</button>
+        <button onclick="pauseTimer()">Pause</button>
+        <button onclick="resetTimer()">Reset</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function switchSection(event, id) {
+      event.preventDefault();
+      document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+      event.target.closest('a').classList.add('active');
+    }
+
+    function newQuote() {
+      const quotes = [
+        "Don't watch the clock; do what it does. Keep going.",
+        "Success is not the key to happiness. Happiness is the key to success.",
+        "The secret of getting ahead is getting started.",
+        "Push yourself, because no one else is going to do it for you.",
+        "Great things never come from comfort zones."
+      ];
+      document.getElementById("quoteText").textContent = quotes[Math.floor(Math.random() * quotes.length)];
+    }
+
+    function addTask() {
+      const input = document.getElementById("taskInput");
+      const taskText = input.value.trim();
+      if (taskText === "") return;
+      const li = document.createElement("li");
+      const textSpan = document.createElement("span");
+      textSpan.textContent = taskText;
+      li.appendChild(textSpan);
+
+      const doneBtn = document.createElement("button");
+      doneBtn.textContent = "✔";
+      doneBtn.onclick = () => {
+        document.getElementById("completedTasks").appendChild(li);
+        doneBtn.remove();
+      };
+      li.appendChild(doneBtn);
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "🗑";
+      delBtn.onclick = () => li.remove();
+      li.appendChild(delBtn);
+
+      document.getElementById("pendingTasks").appendChild(li);
+      input.value = "";
+    }
+
+    function showEvent(dayElement) {
+    const eventText = dayElement.querySelector('.event-text');
+    if (eventText) {
+      eventText.style.display = (eventText.style.display === 'none') ? 'block' : 'none';
+    }
+  }
+    let timer;
+    let seconds = 1500;
+    function updateDisplay() {
+      const min = Math.floor(seconds / 60).toString().padStart(2, '0');
+      const sec = (seconds % 60).toString().padStart(2, '0');
+      document.getElementById("timerDisplay").textContent = `${min}:${sec}`;
+    }
+    function startTimer() {
+      if (timer) return;
+      timer = setInterval(() => {
+        if (seconds > 0) {
+          seconds--;
+          updateDisplay();
+        }
+      }, 1000);
+    }
+    function pauseTimer() {
+      clearInterval(timer);
+      timer = null;
+    }
+    function resetTimer() {
+      clearInterval(timer);
+      timer = null;
+      seconds = 1500;
+      updateDisplay();
+    }
+    updateDisplay();
+  </script>
+</body>
+</html>
